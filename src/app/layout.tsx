@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar1 } from "@/components/layout/navbar1";
 import { Footer2 } from "@/components/footer2";
 import { Hero45 } from "@/components/hero45";
+import { ThemeProvider } from "@/providers/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,14 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar1/>
-        <Hero45 heading="Welcome to FoodHub"></Hero45>
-        {children}
-        <Footer2/>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Navbar1 />
+          <Hero45 heading="Welcome to FoodHub"></Hero45>
+          {children}
+          <Footer2 />
+        </ThemeProvider>
       </body>
     </html>
   );
