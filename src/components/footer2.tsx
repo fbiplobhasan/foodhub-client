@@ -31,11 +31,11 @@ const Footer2 = ({
   logo = {
     src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg",
     alt: "blocks for shadcn/ui",
-    title: "Shadcnblocks.com",
+    title: "Food World",
     url: "https://www.shadcnblocks.com",
   },
   className,
-  tagline = "Components made easy.",
+  tagline = "Comprehensive food provider.",
   menuItems = [
     {
       title: "Product",
@@ -76,7 +76,7 @@ const Footer2 = ({
       ],
     },
   ],
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "© 2026 Foodhub All rights reserved",
   bottomLinks = [
     { text: "Terms and Conditions", url: "#" },
     { text: "Privacy Policy", url: "#" },

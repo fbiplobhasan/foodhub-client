@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar1 } from "@/components/layout/navbar1";
 import { Footer2 } from "@/components/footer2";
+import { Hero45 } from "@/components/hero45";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar1/>
+        <Hero45 heading="Welcome to FoodHub"></Hero45>
         {children}
         <Footer2/>
       </body>
