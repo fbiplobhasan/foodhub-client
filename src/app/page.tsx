@@ -1,13 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { userService } from "@/services/user.service";
+import { MealCard } from "@/components/modules/home/MealCard";
+import { mealService } from "@/services/meal.service";
+import { IMeal } from "@/types";
 
 export default async function Home() {
-  const { data } = await userService.getSession();
+  const { data } = await mealService.getMeal();
   console.log(data);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <Button variant={"outline"}>Click Here</Button>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6">
+      {data?.data?.map((item: IMeal) => (
+        <MealCard key={item.id} meal={item} />
+      ))}
     </div>
   );
 }
