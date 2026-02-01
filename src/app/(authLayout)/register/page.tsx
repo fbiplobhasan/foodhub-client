@@ -11,7 +11,7 @@ export default function SignUpPage() {
           alt: "Food Hub Logo",
           title: "Food Hub",
         }}
-        signupUrl="/register"
+        signupUrl="/login"
         buttonText="Register to your account"
       ></Signup1>
     </div>
