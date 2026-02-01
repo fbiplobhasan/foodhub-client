@@ -37,7 +37,7 @@ export const MealCard = ({ meal }: MealCardProps) => {
 
       <div className="p-5 flex flex-col flex-1">
         <Link
-          href={`/providers/${meal.id}`}
+          href={`/providers/${meal.providerId}`}
           className="mb-3 flex items-center gap-2 border-b border-zinc-50 dark:border-zinc-800 pb-2 hover:opacity-80 transition-opacity"
         >
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-100 text-orange-600">
