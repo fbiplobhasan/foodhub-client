@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar1 } from "@/components/layout/navbar1";
-import { Footer2 } from "@/components/footer2";
 import { Hero45 } from "@/components/hero45";
 import { ThemeProvider } from "@/providers/providers";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,10 +37,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar1 />
-          <Hero45 heading="Welcome to FoodHub"></Hero45>
           {children}
-          <Footer2 />
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

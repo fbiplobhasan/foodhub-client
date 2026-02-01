@@ -1,0 +1,15 @@
+import { Footer2 } from "@/components/footer2";
+import { Hero45 } from "@/components/hero45";
+import { Navbar1 } from "@/components/layout/navbar1";
+import React, { ReactNode } from "react";
+
+export default function layout({ children }: { children: ReactNode }) {
+  return (
+  <div>
+    <Navbar1/>
+    <Hero45 heading="Welcome to FoodHub"/>
+    {children}
+    <Footer2/>
+    </div>
+);
+}

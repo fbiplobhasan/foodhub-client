@@ -6,7 +6,7 @@ export default function LoginPage() {
       <Login1
         heading="Welcome Back"
         logo={{
-          url: "/",
+          url: "/login",
           src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-wordmark.svg",
           alt: "Food Hub Logo",
           title: "Food Hub",

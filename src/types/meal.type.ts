@@ -3,13 +3,20 @@ export interface IMeal {
   name: string;
   description: string;
   price: number;
-  image: string;
-  category: string;
-  averageRating: number;
-  totalReviews: number;
-  status: "AVAILABLE" | "OUT_OF_STOCK";
+  image: string | null; 
+  dietaryType: "VEG" | "NON_VEG"; 
+  categoryId: string;
   providerId: string;
-  providerName?: string; 
   createdAt: string;
-  updatedAt: string;
+  
+  category: {
+    id: string;
+    name: string;
+  };
+
+  provider: {
+    id: string;
+    storeName: string;
+    address: string;
+  };
 }
