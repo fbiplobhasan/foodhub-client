@@ -1,6 +1,7 @@
+import React from 'react'
 
-export default function DynamicPage() {
+export default function ProviderDynamicPage() {
   return (
-    <div>dynamic page</div>
+    <div>provider dynamic page</div>
   )
 }

@@ -1,7 +1,7 @@
 import { Footer2 } from "@/components/footer2";
 import { Hero45 } from "@/components/hero45";
 import { Navbar1 } from "@/components/layout/navbar1";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
 export default function layout({ children }: { children: ReactNode }) {
   return (

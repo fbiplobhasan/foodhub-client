@@ -1,9 +1,9 @@
-import React from "react";
 import { ShoppingCart, Heart, Store, MapPin, Star, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { IMeal } from "@/types";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface MealCardProps {
   meal: IMeal;
@@ -37,7 +37,7 @@ export const MealCard = ({ meal }: MealCardProps) => {
 
       <div className="p-5 flex flex-col flex-1">
         <Link
-          href={`/providers/${meal.providerId}`}
+          href={`/providers/${meal.id}`}
           className="mb-3 flex items-center gap-2 border-b border-zinc-50 dark:border-zinc-800 pb-2 hover:opacity-80 transition-opacity"
         >
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-100 text-orange-600">
@@ -89,6 +89,18 @@ export const MealCard = ({ meal }: MealCardProps) => {
             <ShoppingCart className="mr-2 h-4 w-4" /> Add
           </Button>
         </div>
+        <Link href={`/meals/${meal.id}`} className="w-full">
+          <Button
+            variant="outline"
+            className="group w-full rounded-xl border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-600 dark:text-zinc-400 hover:border-zinc-900 hover:text-zinc-900 dark:hover:border-zinc-100 dark:hover:text-white transition-all duration-300 text-xs font-bold uppercase tracking-widest h-10 gap-2"
+          >
+            Details
+            <ArrowRight
+              size={14}
+              className="transition-transform group-hover:translate-x-1"
+            />
+          </Button>
+        </Link>
       </div>
     </div>
   );
