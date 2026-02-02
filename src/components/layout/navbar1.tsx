@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Book,
-  Menu,
-  ShoppingCart,
-  Sunset,
-  Trees,
-  Zap,
-  ShoppingBag,
-} from "lucide-react"; // ShoppingBag যোগ করা হয়েছে
+import { Menu, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Accordion,
@@ -19,11 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
@@ -36,6 +26,8 @@ import Link from "next/link";
 import { ModeToggle } from "./ModToggle";
 import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client"; 
+import { useRouter } from "next/navigation";
 
 interface MenuItem {
   title: string;
@@ -56,14 +48,8 @@ interface Navbar1Props {
   };
   menu?: MenuItem[];
   auth?: {
-    login: {
-      title: string;
-      url: string;
-    };
-    signup: {
-      title: string;
-      url: string;
-    };
+    login: { title: string; url: string };
+    signup: { title: string; url: string };
   };
 }
 
@@ -76,14 +62,8 @@ const Navbar1 = ({
   },
   menu = [
     { title: "Home", url: "/" },
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-    },
-    {
-      title: "About",
-      url: "/about",
-    },
+    { title: "Dashboard", url: "/dashboard" },
+    { title: "About", url: "/about" },
   ],
   auth = {
     login: { title: "Login", url: "/login" },
@@ -93,49 +73,49 @@ const Navbar1 = ({
 }: Navbar1Props) => {
   const [mounted, setMounted] = useState(false);
   const items = useCartStore((state) => state.items);
+  const { data: session } = authClient.useSession();
+  const router = useRouter();
 
+  // Hydration Error ফিক্স করার জন্য এই useEffect মাস্ট
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.refresh(); 
+  };
+
   return (
-    <section
-      className={cn(
-        "sticky top-0 z-50 bg-background/80 backdrop-blur-md py-4 border-b",
-        className,
-      )}
-    >
+    <section className={cn("sticky top-0 z-50 bg-background/80 backdrop-blur-md py-4 border-b", className)}>
       <div className="container mx-auto px-6">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
           <div className="flex items-center gap-6">
             <Link href={logo.url} className="flex items-center gap-2">
-              <img
-                src={logo.src}
-                className="max-h-8 dark:invert"
-                alt={logo.alt}
-              />
-              <span className="text-lg font-bold tracking-tighter">
-                {logo.title}
-              </span>
+              <img src={logo.src} className="max-h-8 dark:invert" alt={logo.alt} />
+              <span className="text-lg font-bold tracking-tighter">{logo.title}</span>
             </Link>
-            <div className="flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menu.map((item) => (
+                  <NavigationMenuItem key={item.title}>
+                    <NavigationMenuLink asChild className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:text-orange-600">
+                      <Link href={item.url}>{item.title}</Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
           <div className="flex items-center gap-4">
             <ModeToggle />
-
+            
             <Link href="/cart" className="relative group p-2">
               <ShoppingBag className="size-6 transition-colors group-hover:text-orange-600" />
-
               {mounted && cartItemCount > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] font-bold text-white border-2 border-background">
                   {cartItemCount}
@@ -143,141 +123,98 @@ const Navbar1 = ({
               )}
             </Link>
 
-            <div className="flex gap-2 ml-2">
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="rounded-xl"
-              >
-                <Link href={auth.login.url}>{auth.login.title}</Link>
-              </Button>
-              <Button
-                asChild
-                size="sm"
-                className="rounded-xl bg-orange-600 hover:bg-orange-700 text-white border-none"
-              >
-                <Link href={auth.signup.url}>{auth.signup.title}</Link>
-              </Button>
+            <div className="flex gap-2 ml-2 min-w-[150px] justify-end">
+              {/* শুধুমাত্র মাউন্ট হওয়ার পর সেশন চেক হবে */}
+              {mounted && (
+                <>
+                  {session ? (
+                    <div className="flex items-center gap-4 animate-in fade-in duration-500">
+                      <span className="text-sm font-black uppercase tracking-tighter text-orange-600">
+                        Hi, {session.user.name?.split(" ")[0]}
+                      </span>
+                      <Button 
+                        onClick={handleLogout} 
+                        variant="destructive" 
+                        size="sm" 
+                        className="rounded-xl h-9 px-4 font-bold text-[10px] uppercase tracking-widest"
+                      >
+                        Logout
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 animate-in fade-in duration-500">
+                      <Button asChild variant="outline" size="sm" className="rounded-xl">
+                        <Link href={auth.login.url}>{auth.login.title}</Link>
+                      </Button>
+                      <Button asChild size="sm" className="rounded-xl bg-orange-600 hover:bg-orange-700 text-white border-none px-5 font-bold uppercase text-[10px] tracking-widest">
+                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </nav>
 
         {/* Mobile Menu */}
-        <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
-            <Link href={logo.url} className="flex items-center gap-2">
-              <img
-                src={logo.src}
-                className="max-h-8 dark:invert"
-                alt={logo.alt}
-              />
-              <span className="text-lg font-bold">{logo.title}</span>
+        <div className="flex lg:hidden items-center justify-between">
+          <Link href={logo.url} className="flex items-center gap-2">
+            <img src={logo.src} className="max-h-8 dark:invert" alt={logo.alt} />
+          </Link>
+
+          <div className="flex items-center gap-4">
+            <Link href="/cart" className="relative p-2">
+              <ShoppingBag className="size-6" />
+              {mounted && cartItemCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-orange-600 text-[8px] font-bold text-white">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
-
-            <div className="flex items-center gap-4">
-              <Link href="/cart" className="relative p-2">
-                <ShoppingBag className="size-6" />
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-orange-600 text-[8px] font-bold text-white">
-                    {cartItemCount}
-                  </span>
-                )}
-              </Link>
-
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="rounded-xl">
-                    <Menu className="size-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="overflow-y-auto">
-                  <SheetHeader>
-                    <SheetTitle>
-                      <Link href={logo.url} className="flex items-center gap-2">
-                        <img
-                          src={logo.src}
-                          className="max-h-8 dark:invert"
-                          alt={logo.alt}
-                        />
-                        <span className="font-bold">{logo.title}</span>
-                      </Link>
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="flex flex-col gap-6 p-4 mt-6">
-                    <Accordion
-                      type="single"
-                      collapsible
-                      className="flex w-full flex-col gap-4"
-                    >
-                      {menu.map((item) => renderMobileMenuItem(item))}
-                    </Accordion>
-
-                    <div className="flex flex-col gap-3 pt-6 border-t">
-                      <Button asChild variant="outline" className="rounded-xl">
-                        <Link href={auth.login.url}>{auth.login.title}</Link>
-                      </Button>
-                      <Button asChild className="rounded-xl bg-orange-600">
-                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                      </Button>
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="rounded-xl">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle className="text-left uppercase font-black tracking-tighter">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 mt-8">
+                   {menu.map((item) => (
+                     <Link key={item.title} href={item.url} className="text-xl font-black uppercase tracking-tighter hover:text-orange-600 transition-colors">
+                       {item.title}
+                     </Link>
+                   ))}
+                   
+                   <div className="pt-8 mt-4 border-t space-y-4">
+                     {mounted && (
+                       <>
+                         {session ? (
+                           <div className="space-y-4">
+                              <p className="font-bold text-zinc-500 italic">Logged in as {session.user.name}</p>
+                              <Button onClick={handleLogout} className="w-full bg-red-600 hover:bg-red-700 rounded-2xl h-14 font-bold uppercase tracking-widest">
+                                Logout
+                              </Button>
+                           </div>
+                         ) : (
+                           <div className="grid grid-cols-2 gap-4">
+                              <Button asChild variant="outline" className="rounded-2xl h-14 font-bold uppercase tracking-widest"><Link href="/login">Login</Link></Button>
+                              <Button asChild className="rounded-2xl h-14 bg-orange-600 hover:bg-orange-700 font-bold uppercase tracking-widest"><Link href="/register">Sign Up</Link></Button>
+                           </div>
+                         )}
+                       </>
+                     )}
+                   </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
     </section>
-  );
-};
-
-const renderMenuItem = (item: MenuItem) => {
-  return (
-    <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink
-        asChild
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-orange-600"
-      >
-        <Link href={item.url}>{item.title}</Link>
-      </NavigationMenuLink>
-    </NavigationMenuItem>
-  );
-};
-
-const renderMobileMenuItem = (item: MenuItem) => {
-  if (item.items) {
-    return (
-      <AccordionItem key={item.title} value={item.title} className="border-b-0">
-        <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-          {item.title}
-        </AccordionTrigger>
-        <AccordionContent className="mt-2">
-          {item.items.map((subItem) => (
-            <Link
-              key={subItem.title}
-              href={subItem.url}
-              className="flex items-center gap-4 p-3 rounded-md hover:bg-muted"
-            >
-              <div className="text-orange-600">{subItem.icon}</div>
-              <div>
-                <div className="text-sm font-semibold">{subItem.title}</div>
-              </div>
-            </Link>
-          ))}
-        </AccordionContent>
-      </AccordionItem>
-    );
-  }
-
-  return (
-    <Link
-      key={item.title}
-      href={item.url}
-      className="text-md font-semibold hover:text-orange-600 transition-colors"
-    >
-      {item.title}
-    </Link>
   );
 };
 

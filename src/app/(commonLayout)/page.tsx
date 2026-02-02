@@ -1,7 +1,6 @@
 import { AllMeals } from "@/components/modules/home/AllMeals";
-import { MealCard } from "@/components/modules/home/MealCard";
+import FoodFilter from "@/components/modules/home/FoodFilter";
 import { mealService } from "@/services/meal.service";
-import { IMeal } from "@/types";
 
 export default async function Home() {
   const { data } = await mealService.getMeal();
@@ -10,6 +9,7 @@ export default async function Home() {
 
   return (
     <div className="px-6">
+      {/* <FoodFilter/> */}
       <AllMeals allMeals={allMeals} />
     </div>
   );
